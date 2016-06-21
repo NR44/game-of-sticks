@@ -1,7 +1,5 @@
 # Game of Sticks
 
-## Description
-
 Create a version of the Game of Sticks where human and AI players can play
 against each other.
 
@@ -23,13 +21,11 @@ The following is an example of the game of sticks.
 * Marvin takes 2 sticks, there is 1 stick remaining.
 * Hal has to take the final stick and loses.
 
-This assignment is split into four parts:
+This assignment is split into parts:
 
 1. Implementing the game as a two-player game.
 2. Adding an AI that can be played against.
-3. Adding an option for training the AI against another AI.
-4. Performing mathematical analysis of the problem based on information
-   gathered from the AI.
+3. Saving data to keep information persistent.
 
 ## Night 1
 
@@ -108,6 +104,19 @@ are left to make a decision.
 #### AI vs AI
 If everything is done correctly then we should have the ability to make both
 players be AI and play against each other.
+
+#### Record Keeping
+We want to keep a running total of all wins/loses for each player who plays our
+game.  This means we need to start keeping track so we can gloat.  Create a
+`HashMap` of each player name and their win/loss rating.  When a user wins add
+one to their record and when they lose remove one from their record.
+
+#### Saving
+At the end of the game we want to take the record hashmap and save it to a file.
+
+#### Loading
+When the program starts up open the saved file and load the hashmap back into
+memory.
 
 ### Hard Mode
 
@@ -231,26 +240,6 @@ AI selects 2.
 AI loses.
 Play again (y/n)? n
 ```
-
-
-## Night 3
-
-### Normal Mode
-
-#### Record Keeping
-We want to keep a running total of all wins/loses for each player who plays our
-game.  This means we need to start keeping track so we can gloat.  Create a
-`HashMap` of each player name and their win/loss rating.  When a user wins add
-one to their record and when they lose remove one from their record.
-
-#### Saving
-At the end of the game we want to take the record hashmap and save it to a file.
-
-#### Loading
-When the program starts up open the saved file and load the hashmap back into
-memory.
-
-### Hard Mode
 
 #### Keeping the AI smart
 Our learning AI gets really smart after a long time playing.  We don't want it
