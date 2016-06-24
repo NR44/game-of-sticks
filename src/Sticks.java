@@ -1,48 +1,71 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+
+import jodd.json.JsonParser;
+import jodd.json.JsonSerializer;
 
 /**
  * Created by Nigel on 6/21/16.
  */
 public class Sticks {
-    public static void main(String[] args) {
-        Player player1 = new Player();
-        Player player2 = new Player();
-        Game sticks = new Game(player1, player2);
+    public static void main(String[] args) throws Exception {
+        HumanPlayer humanPlayer1 = new HumanPlayer("Nigel");
+        HumanPlayer humanPlayer2 = new HumanPlayer("Jamal");
+        DumbAI dumbAI1 = new DumbAI("JEDIEN");
+        DumbAI dumbAI2 = new DumbAI("NYLA");
+        Scanner scanner = new Scanner(System.in);
+        Game game = null;
+        Map<String, Integer> tracker = new HashMap<>();
+        File file = new File("players.json");
+        FileWriter fw = new FileWriter(file);
+        scanner.useDelimiter("\\Z");
+        String contents = scanner.next();
 
-        int stickSelect = 0;
-        Scanner input = new Scanner(System.in);
-        player1.setName("Player 1");
-        player2.setName("Player 2");
+        JsonParser parser = new JsonParser();
+        tracker = parser.parse(contents);
 
-        System.out.println("Welcome to my Game of Sticks!");
-            //Check that total number of stick is between 10 and 100.
-            while (!(stickSelect >= 10 && stickSelect <= 100)) {
-                System.out.println("How many sticks will be on the table (10 - 100): ");
-                stickSelect = Integer.parseInt(input.nextLine());
-                if (stickSelect < 10 || stickSelect > 100) {
-                    System.out.println("Nope, enter a number between 1 & 100.");
-                }
-            }
-            sticks.setAmount(stickSelect); //Set the total amount of sticks on the board.
+        System.out.println("Which game mode would you like to play?" + System.lineSeparator() + "1. Human vs Human" + System.lineSeparator() + "2. Human vs AI" + System.lineSeparator() + "3. AI vs AI");
+        int mode = Integer.parseInt(scanner.nextLine());
+
         do {
-            String currentPlayerName;
-            int playerSelect = 0;
+            switch (mode) {
+                case 1:
+                    game = new Game(humanPlayer1, humanPlayer2);
+                    break;
+                case 2:
+                    game = new Game(humanPlayer1, dumbAI1);
+                    break;
+                case 3:
+                    game = new Game(dumbAI1, dumbAI2);
+                    break;
+                default:
+                    System.out.println("Your choice must be 1, 2, or 3.");
+            }
+        }while(mode < 1 || mode > 3);
 
-            //Allow and check that current player takes at least 1 stick and no more than 3 and no more the the remaining number of sticks.
-            while (!(playerSelect >= 1 && playerSelect <= 3 && playerSelect <= sticks.getAmount())) {
-                currentPlayerName = sticks.getCurrentPlayerName();
-                System.out.println(currentPlayerName + ": How many sticks do you take (1-3)? ");
-                playerSelect = Integer.parseInt(input.nextLine());
-                if (playerSelect > sticks.getAmount()){
-                    System.out.format("There are only %d sticks. You cannot take more than that.\n", sticks.getAmount());
+        game.runGame();
+
+        for (String name : tracker.keySet()){
+            boolean exist1, exist2  = false;
+            if (name == game.getWinner()){
+                exist1 = true;
+                tracker.put(name, tracker.get(name) + 1);
+                if (exist1 == false){
+                    tracker.put(name, tracker.get(name));
                 }
-                else if (!(playerSelect >= 1 && playerSelect <= 3)) {
-                    System.out.println("You can only take 1, 2 or 3 sticks.");
+            }else if (name == game.getLoser()){
+                exist2 = true;
+                tracker.put(name, tracker.get(name) - 1);
+                if (exist2 == false){
+                    tracker.put(name, tracker.get(name));
                 }
             }
-            sticks.setAmount(sticks.getAmount()-playerSelect);
-            System.out.format("There are %d sticks remaining.\n", sticks.getAmount());
-            sticks.switchPlayer();
-        }while(!(sticks.declareLoser(sticks.getAmount())));
+        }
+        JsonSerializer serializer = new JsonSerializer();
+        String json = serializer.serialize(tracker);
+        fw.write(json);
     }
 }
