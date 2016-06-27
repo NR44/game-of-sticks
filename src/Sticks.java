@@ -19,15 +19,11 @@ public class Sticks {
         Scanner scanner = new Scanner(System.in);
         Game game = null;
         Map<String, Integer> tracker = new HashMap<>();
-        File file = new File("players.json");
-        FileWriter fw = new FileWriter(file);
-        scanner.useDelimiter("\\Z");
-        String contents = scanner.next();
 
-        JsonParser parser = new JsonParser();
-        tracker = parser.parse(contents);
+        /*Need to fix this for resubmission 6/24/2016*/
 
-        System.out.println("Which game mode would you like to play?" + System.lineSeparator() + "1. Human vs Human" + System.lineSeparator() + "2. Human vs AI" + System.lineSeparator() + "3. AI vs AI");
+        int score = 0;
+                System.out.println("Which game mode would you like to play?" + System.lineSeparator() + "1. Human vs Human" + System.lineSeparator() + "2. Human vs AI" + System.lineSeparator() + "3. AI vs AI");
         int mode = Integer.parseInt(scanner.nextLine());
 
         do {
@@ -64,8 +60,6 @@ public class Sticks {
                 }
             }
         }
-        JsonSerializer serializer = new JsonSerializer();
-        String json = serializer.serialize(tracker);
-        fw.write(json);
+        game.saveFile(tracker);
     }
 }

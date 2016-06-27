@@ -1,9 +1,20 @@
+import jodd.json.JsonParser;
+import jodd.json.JsonSerializer;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
  * Created by Nigel on 6/21/16.
  */
 public class Game {
+    File file = new File("players.json");
     private int totalSticks;
     private Player player1, player2, currentPlayer = null;
     Scanner scanner = new Scanner(System.in);
@@ -19,27 +30,27 @@ public class Game {
         this.player2 = player2;
     }
 
-    public String setWinner(Player name){
+    public String setWinner(Player name) {
         return winnerName = name.getName();
     }
 
-    public String setLoser(Player name){
+    public String setLoser(Player name) {
         return loserName = name.getName();
     }
 
-    public String getWinner(){
+    public String getWinner() {
         return winnerName;
     }
 
-    public String getLoser(){
+    public String getLoser() {
         return loserName;
     }
 
-    public void runGame(){
+    public void runGame() {
         int choice;
         setBoard();
         System.out.println("Ok, let's play!");
-        while (!declareLoser(totalSticks) ) {
+        while (!declareLoser(totalSticks)) {
             choice = currentPlayer.makeChoice();
             checkChoice(choice);
             totalSticks -= choice;
@@ -48,7 +59,7 @@ public class Game {
         }
     }
 
-    public void setBoard(){
+    public void setBoard() {
         int stickSelect = 0;
         while (stickSelect < STICKMIN || stickSelect > STICKMAX) {
             System.out.println("How many sticks will be on the table (10 - 100): ");
@@ -60,11 +71,10 @@ public class Game {
         totalSticks = stickSelect;
     }
 
-    public void switchPlayer(){
-        if (currentPlayer == player1){
+    public void switchPlayer() {
+        if (currentPlayer == player1) {
             currentPlayer = player2;
-        }
-        else {
+        } else {
             currentPlayer = player1;
         }
     }
@@ -90,8 +100,8 @@ public class Game {
         return gameOver;
     }
 
-    public int checkChoice (int choice) {
-        while ((choice < SELECTMIN || choice > SELECTMAX) || (choice > totalSticks)){
+    public int checkChoice(int choice) {
+        while ((choice < SELECTMIN || choice > SELECTMAX) || (choice > totalSticks)) {
             if (choice > totalSticks) {
                 System.out.format("There are only %d sticks. You cannot take more than that.\n", totalSticks);
                 currentPlayer.makeChoice();
@@ -101,5 +111,25 @@ public class Game {
             }
         }
         return choice;
+    }
+
+  /*  public HashMap loadFile(HashMap players) throws FileNotFoundException {
+        Scanner fileScanner = new Scanner(file);
+        fileScanner.useDelimiter("\\Z");
+        String contents = scanner.next();
+
+        //Parsing - String to Object (Map in this case)
+        JsonParser parser = new JsonParser();
+        players = parser.parse(players, Map.class);
+
+        return players;
+    }*/
+
+    public void saveFile (Map players) throws IOException {
+        JsonSerializer serializer = new JsonSerializer();
+        String json = serializer.serialize(players);
+        FileWriter fw = new FileWriter(file);
+        fw.write(json);
+        fw.close();
     }
 }
