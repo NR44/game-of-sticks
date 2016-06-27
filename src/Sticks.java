@@ -19,11 +19,8 @@ public class Sticks {
         Scanner scanner = new Scanner(System.in);
         Game game = null;
         Map<String, Integer> tracker = new HashMap<>();
-
-        /*Need to fix this for resubmission 6/24/2016*/
-
-        int score = 0;
-                System.out.println("Which game mode would you like to play?" + System.lineSeparator() + "1. Human vs Human" + System.lineSeparator() + "2. Human vs AI" + System.lineSeparator() + "3. AI vs AI");
+        
+        System.out.println("Which game mode would you like to play?" + System.lineSeparator() + "1. Human vs Human" + System.lineSeparator() + "2. Human vs AI" + System.lineSeparator() + "3. AI vs AI");
         int mode = Integer.parseInt(scanner.nextLine());
 
         do {
@@ -40,26 +37,10 @@ public class Sticks {
                 default:
                     System.out.println("Your choice must be 1, 2, or 3.");
             }
-        }while(mode < 1 || mode > 3);
-
+        } while (mode < 1 || mode > 3);
         game.runGame();
-
-        for (String name : tracker.keySet()){
-            boolean exist1, exist2  = false;
-            if (name == game.getWinner()){
-                exist1 = true;
-                tracker.put(name, tracker.get(name) + 1);
-                if (exist1 == false){
-                    tracker.put(name, tracker.get(name));
-                }
-            }else if (name == game.getLoser()){
-                exist2 = true;
-                tracker.put(name, tracker.get(name) - 1);
-                if (exist2 == false){
-                    tracker.put(name, tracker.get(name));
-                }
-            }
-        }
+        tracker = game.loadFile(tracker);
+        game.updatePlayers(game, tracker);
         game.saveFile(tracker);
     }
 }

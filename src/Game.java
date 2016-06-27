@@ -101,7 +101,7 @@ public class Game {
     }
 
     public int checkChoice(int choice) {
-        while ((choice < SELECTMIN || choice > SELECTMAX) || (choice > totalSticks)) {
+        while ( choice < SELECTMIN || choice > SELECTMAX || choice > totalSticks) {
             if (choice > totalSticks) {
                 System.out.format("There are only %d sticks. You cannot take more than that.\n", totalSticks);
                 currentPlayer.makeChoice();
@@ -113,17 +113,17 @@ public class Game {
         return choice;
     }
 
-  /*  public HashMap loadFile(HashMap players) throws FileNotFoundException {
+    public Map loadFile(Map players) throws FileNotFoundException {
         Scanner fileScanner = new Scanner(file);
         fileScanner.useDelimiter("\\Z");
-        String contents = scanner.next();
+        String contents = fileScanner.next();
 
         //Parsing - String to Object (Map in this case)
         JsonParser parser = new JsonParser();
-        players = parser.parse(players, Map.class);
+        players = parser.parse(contents, HashMap.class);
 
         return players;
-    }*/
+    }
 
     public void saveFile (Map players) throws IOException {
         JsonSerializer serializer = new JsonSerializer();
@@ -131,5 +131,30 @@ public class Game {
         FileWriter fw = new FileWriter(file);
         fw.write(json);
         fw.close();
+    }
+
+    public Map updatePlayers(Game game, Map<String, Integer> track){
+        boolean winnerExist = false, loserExist = false;
+        for (String name : track.keySet()){
+
+            if (name.equalsIgnoreCase(game.getWinner()) ){
+                winnerExist = true;
+                track.put(name, track.get(name)+1);
+            }else if (name.equalsIgnoreCase(game.getLoser())){
+                loserExist = true;
+                track.put(name, track.get(name) - 1);
+            }
+        }
+        if (winnerExist == false){
+            track.put(game.getWinner(), 1);
+        }
+
+        if (loserExist == false){
+            track.put(game.getLoser(), 1);
+        }
+        if (track.isEmpty()){
+            System.out.println("Record keeper array is blank.");
+        }
+        return track;
     }
 }
